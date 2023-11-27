@@ -27,7 +27,7 @@ public class MemberService {
     private void validateDuplicateMember(Member member) {
         //EXCEPTION
         // 동시에 a라는 이름 회원 가입하면 통과됨. db단에서도 unique 처리 필요
-        List<Member> findMembers = memberRepository.findByName(member.getUsername());
+        List<Member> findMembers = memberRepository.findByName(member.getName());
         if (!findMembers.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
