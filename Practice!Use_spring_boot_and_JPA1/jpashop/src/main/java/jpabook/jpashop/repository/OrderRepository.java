@@ -5,6 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Root;
 import jpabook.jpashop.domain.Order;
 import lombok.RequiredArgsConstructor;
 
@@ -22,5 +26,12 @@ public class OrderRepository {
         return em.find(Order.class, id);
     }
 
-    // public List<Order> findAll(Search){}
+    public List<Order> findAll(OrderSearch orderSearch) {
+        return em.createQuery("select o from Order o join o.member m" + 
+                " where o.status = :status" + 
+                " and m.name like :name", Order.class)
+                .setParameter("status", orderSearch.getOrderStatus())
+                .setParameter("name", orderSearch.getMemberName())
+                .getResultList();
+    }
 }
