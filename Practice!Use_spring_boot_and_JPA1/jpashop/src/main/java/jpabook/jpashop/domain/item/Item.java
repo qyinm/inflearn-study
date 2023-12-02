@@ -13,16 +13,22 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 import jpabook.jpashop.domain.Category;
 import jpabook.jpashop.exception.NotEnoughStockException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
 @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@SuperBuilder
 public abstract class Item {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "item_id")
     private Long id;
 
@@ -33,7 +39,7 @@ public abstract class Item {
     @ManyToMany(mappedBy = "items")
     private List<Category> categories = new ArrayList<>();
 
-    //==비즈니스 로직==//
+    // ==비즈니스 로직==//
     // stock 증가
     public void addStock(int quantity) {
         this.stockQuantity += quantity;
