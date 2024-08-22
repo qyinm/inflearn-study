@@ -19,7 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -68,7 +71,52 @@ public class EventControllerTests {
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.query-events").exists())
                 .andExpect(jsonPath("_links.update-event").exists())
-                .andDo(document("create-event"))
+                .andDo(document("create-event",
+                        links(halLinks(),
+                                linkWithRel("self").description("link to self"),
+                                linkWithRel("query-events").description("link to query events"),
+                                linkWithRel("update-event").description("link to update an existing")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type header")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("Name of new event"),
+                                fieldWithPath("description").description("description of new event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("date time of begin of new event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("date time of close of new event"),
+                                fieldWithPath("beginEventDateTime").description("date time of begin of new event"),
+                                fieldWithPath("endEventDateTime").description("date time of close of new event"),
+                                fieldWithPath("location").description("location of new event"),
+                                fieldWithPath("basePrice").description("basePrice of new event"),
+                                fieldWithPath("maxPrice").description("maxPrice of new event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of new event")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("Location header"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("Content type")
+                        ),
+                        // Prefix Relaxed will not fully describe e.g. relaxedResponseFields
+                        // if you want to use responseFields, use with 'subsectionWithPath' that seems to document their subsections
+                        responseFields(
+                                fieldWithPath("id").description("id of new event"),
+                                fieldWithPath("name").description("Name of new event"),
+                                fieldWithPath("description").description("description of new event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("date time of begin of new event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("date time of close of new event"),
+                                fieldWithPath("beginEventDateTime").description("date time of begin of new event"),
+                                fieldWithPath("endEventDateTime").description("date time of close of new event"),
+                                fieldWithPath("location").description("location of new event"),
+                                fieldWithPath("basePrice").description("basePrice of new event"),
+                                fieldWithPath("maxPrice").description("maxPrice of new event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of new event"),
+                                fieldWithPath("free").description("it tells if this event is free or not"),
+                                fieldWithPath("offline").description("it tells if this event is offline or not"),
+                                fieldWithPath("eventStatus").description("event status"),
+                                subsectionWithPath("_links").description("it's links complying HATEOAS SPEC")
+                        )
+                ))
         ;
 
     }
