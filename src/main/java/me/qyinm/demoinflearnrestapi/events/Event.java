@@ -41,4 +41,18 @@ public class Event {
             this.offline = true;
         }
     }
+
+    public EventDto ToEventDto() {
+        return EventDto.builder()
+                .name(this.name)
+                .description(this.description)
+                .beginEnrollmentDateTime(this.beginEnrollmentDateTime)
+                .closeEnrollmentDateTime(this.closeEnrollmentDateTime)
+                .beginEventDateTime(this.beginEventDateTime)
+                .endEventDateTime(this.endEventDateTime)
+                .basePrice(this.basePrice)
+                .maxPrice(this.maxPrice)
+                .limitOfEnrollment(this.limitOfEnrollment)
+                .build();
+    }
 }

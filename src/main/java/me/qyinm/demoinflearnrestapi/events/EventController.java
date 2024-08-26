@@ -1,5 +1,6 @@
 package me.qyinm.demoinflearnrestapi.events;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import me.qyinm.demoinflearnrestapi.common.ErrorResource;
 import org.modelmapper.ModelMapper;
@@ -11,10 +12,13 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -78,6 +82,57 @@ public class EventController {
         Event event = optionalEvent.get();
         EventResource eventResource = new EventResource(event);
         eventResource.add(Link.of("/docs/index.html#resources-events-get").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity patchEvent(@RequestBody @Valid EventDto eventDto, @PathVariable Integer id, Errors errors, Model model) {
+        try {
+            Event findEvent = this.eventRepository.findById(id)
+                    .orElseThrow(IllegalArgumentException::new);
+            if (errors.hasErrors()) {
+                return ResponseEntity.badRequest().build();
+            }
+            this.eventValidator.validate(eventDto, errors);
+            if (errors.hasErrors()) {
+                return ResponseEntity.badRequest().build();
+            }
+            modelMapper.map(eventDto, findEvent);
+            Event saveEvent = this.eventRepository.save(findEvent);
+            EventResource eventResource = new EventResource(saveEvent);
+            eventResource.add(linkTo(EventController.class).withRel("update event"));
+            return ResponseEntity.ok(eventResource);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // whiteship code
+    @PutMapping("/{id}")
+    public ResponseEntity updateEvent(@PathVariable Integer id,
+                                      @RequestBody @Valid EventDto eventDto,
+                                      Errors errors) {
+        Optional<Event> optionalEvent = this.eventRepository.findById(id);
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (errors.hasErrors()) {
+            return badRequest(errors);
+        }
+
+        this.eventValidator.validate(eventDto, errors);
+        if (errors.hasErrors()) {
+            return badRequest(errors);
+        }
+
+        Event existingEvent = optionalEvent.get();
+        this.modelMapper.map(eventDto, existingEvent);
+        Event savedEvent = this.eventRepository.save(existingEvent);
+
+        EventResource eventResource = new EventResource(savedEvent);
+        eventResource.add(Link.of("/docs/index.html#resources-events-update").withRel("profile"));
+
         return ResponseEntity.ok(eventResource);
     }
 
