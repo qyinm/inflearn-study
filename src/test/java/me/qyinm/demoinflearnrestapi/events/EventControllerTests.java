@@ -26,10 +26,9 @@ import java.util.stream.IntStream;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -411,7 +410,54 @@ public class EventControllerTests {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("name").value(eventName))
-                .andExpect(jsonPath("_links.self").exists());
+                .andExpect(jsonPath("_links.self").exists())
+                .andDo(document("update-event",
+                        links(halLinks(),
+                                linkWithRel("self").description("link to self"),
+                                linkWithRel("profile").description("link to profile")
+                        ),
+                        pathParameters(
+                                parameterWithName("id").description("updating event id")
+                        ),
+                        requestHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content header")
+                        ),
+                        requestFields(
+                                fieldWithPath("name").description("Name of updated event"),
+                                fieldWithPath("description").description("description of updated event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("date time of begin of updated event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("date time of close of updated event"),
+                                fieldWithPath("beginEventDateTime").description("date time of begin of updated event"),
+                                fieldWithPath("endEventDateTime").description("date time of close of updated event"),
+                                fieldWithPath("location").description("location of updated event"),
+                                fieldWithPath("basePrice").description("basePrice of updated event"),
+                                fieldWithPath("maxPrice").description("maxPrice of updated event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of updated event")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type header")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("event id"),
+                                fieldWithPath("name").description("Name of updated event"),
+                                fieldWithPath("description").description("description of updated event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("date time of begin of updated event"),
+                                fieldWithPath("closeEnrollmentDateTime").description("date time of close of updated event"),
+                                fieldWithPath("beginEventDateTime").description("date time of begin of updated event"),
+                                fieldWithPath("endEventDateTime").description("date time of close of updated event"),
+                                fieldWithPath("location").description("location of updated event"),
+                                fieldWithPath("basePrice").description("basePrice of updated event"),
+                                fieldWithPath("maxPrice").description("maxPrice of updated event"),
+                                fieldWithPath("limitOfEnrollment").description("limit of updated event"),
+                                fieldWithPath("offline").description("updated event offline"),
+                                fieldWithPath("free").description("updated event free"),
+                                fieldWithPath("eventStatus").description("updated event status"),
+                                fieldWithPath("_links.self.href").description("self link of updated event"),
+                                fieldWithPath("_links.profile.href").description("profile link of updated event")
+                        )
+                ))
+        ;
+
     }
 
     @Test
@@ -429,6 +475,8 @@ public class EventControllerTests {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+
+
     }
 
     @Test
