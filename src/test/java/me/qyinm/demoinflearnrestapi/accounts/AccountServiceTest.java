@@ -7,13 +7,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.swing.*;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -43,5 +45,14 @@ public class AccountServiceTest {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         assertThat(userDetails.getPassword()).isEqualTo(password);
+    }
+
+    @Test
+    public void findByUsernameFail() {
+        String username = "random@email.com";
+        UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class,
+                () -> accountService.loadUserByUsername(username));
+
+        assertThat(exception.getMessage()).isEqualTo(username);
     }
 }
