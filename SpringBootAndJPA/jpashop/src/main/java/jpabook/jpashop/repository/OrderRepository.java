@@ -7,10 +7,6 @@ import org.springframework.util.StringUtils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
 import jpabook.jpashop.domain.Order;
 import lombok.RequiredArgsConstructor;
 
@@ -79,5 +75,4 @@ public class OrderRepository {
                         " join fetch o.delivery", Order.class
         ).getResultList();
     }
-
 }
