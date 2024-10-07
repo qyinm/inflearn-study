@@ -9,6 +9,7 @@ import jpabook.jpashop.repository.OrderSearch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,29 @@ public class OrderApiController {
         return orders.stream()
                 .map(OrderDto::new)
                 .toList();
+    }
 
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        for (Order order : orders) {
+            System.out.println("order ref: " + order + " order id: " + order.getId());
+        }
+        return orders.stream()
+                .map(OrderDto::new)
+                .toList();
+    }
+
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset
+            ,@RequestParam(value= "limit", defaultValue = "100") int limit)
+    {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
+
+        return orders.stream()
+                .map(OrderDto::new)
+                .toList();
     }
 
     @Getter
@@ -47,10 +70,11 @@ public class OrderApiController {
 
         private Long orderId;
         private String name;
-        private  LocalDateTime orderDate;
+        private LocalDateTime orderDate;
         private OrderStatus orderStatus;
         private Address address;
         private List<OrderItemDto> orderItems;
+
         public OrderDto(Order order) {
 
             orderId = order.getId();
