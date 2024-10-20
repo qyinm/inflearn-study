@@ -2,6 +2,7 @@ package com.hippoo.springdatajpa.repository;
 
 import com.hippoo.springdatajpa.dto.MemberDto;
 import com.hippoo.springdatajpa.entity.Member;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -28,4 +29,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
+
+    List<Member> findListByUsername(String username); // 컬렉션
+
+    Member findMemberByUsername(String username); // 단건
+
+    Optional<Member> findOptionalByUsername(String username); // 단건 Optional
 }

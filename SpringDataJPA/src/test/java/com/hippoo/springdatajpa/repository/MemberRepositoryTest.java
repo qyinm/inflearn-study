@@ -4,6 +4,7 @@ import com.hippoo.springdatajpa.dto.MemberDto;
 import com.hippoo.springdatajpa.entity.Member;
 import com.hippoo.springdatajpa.entity.Team;
 import java.util.Arrays;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -150,5 +151,22 @@ class MemberRepositoryTest {
         for (Member member : result) {
             System.out.println("member = " + member);
         }
+    }
+
+    @Test
+    public void returnType() {
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("BBB", 10);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+        List<Member> result = memberRepository.findListByUsername("asdf");
+        System.out.println("result size = " + result.size());
+        Member findMember = memberRepository.findMemberByUsername("AAA");
+        System.out.println("findMember = " + findMember);
+        Member findMemberIsNULL = memberRepository.findMemberByUsername("asdfasdf");
+        System.out.println("findMember = " + findMemberIsNULL);
+        Optional<Member> optionalMember = memberRepository.findOptionalByUsername("asdfasdf");
+        System.out.println("optionalMember = " + optionalMember);
     }
 }
