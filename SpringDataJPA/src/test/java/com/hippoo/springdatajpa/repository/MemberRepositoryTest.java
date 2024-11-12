@@ -197,4 +197,25 @@ class MemberRepositoryTest {
         assertThat(page.isFirst()).isTrue();
         assertThat(page.hasNext()).isTrue();
     }
+
+    @Test
+    public void bulkUpdate() {
+        // Given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 11));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        // When
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+        List<Member> members = memberRepository.findByUsername("member5");
+        Member member5 = members.get(0);
+
+        assertThat(member5.getAge()).isEqualTo(41);
+
+        // Then
+        assertThat(resultCount).isEqualTo(3);
+    }
 }

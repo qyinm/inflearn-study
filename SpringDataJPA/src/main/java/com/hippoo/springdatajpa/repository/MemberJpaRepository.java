@@ -3,10 +3,9 @@ package com.hippoo.springdatajpa.repository;
 import com.hippoo.springdatajpa.entity.Member;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class MemberJpaRepository {
@@ -50,7 +49,7 @@ public class MemberJpaRepository {
     }
 
     public List<Member> findByUsername(String username) {
-       return em.createNamedQuery("Member.findByUsername", Member.class)
+        return em.createNamedQuery("Member.findByUsername", Member.class)
                 .setParameter("username", username)
                 .getResultList();
     }
@@ -67,5 +66,12 @@ public class MemberJpaRepository {
         return em.createQuery("select count(m) from Member m where m.age = :age", Long.class)
                 .setParameter("age", age)
                 .getSingleResult();
+    }
+
+    public int bulkAgePlus(int age) {
+        return em.createQuery("update Member m set m.age = m.age + 1" +
+                        " where m.age >= :age")
+                .setParameter("age", age)
+                .executeUpdate();
     }
 }
