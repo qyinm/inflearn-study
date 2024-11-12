@@ -3,6 +3,8 @@ package com.hippoo.springdatajpa.repository;
 import com.hippoo.springdatajpa.dto.MemberDto;
 import com.hippoo.springdatajpa.entity.Member;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -35,4 +37,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findMemberByUsername(String username); // 단건
 
     Optional<Member> findOptionalByUsername(String username); // 단건 Optional
+
+    Page<Member> findByAge(int age, Pageable pageable);
 }
