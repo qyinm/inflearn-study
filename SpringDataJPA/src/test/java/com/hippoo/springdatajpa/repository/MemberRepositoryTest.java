@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -284,5 +285,27 @@ class MemberRepositoryTest {
     void callCustomRepository() {
         // 실행만 되면 통과
         List<Member> result = memberRepository.findMemberCustom();
+    }
+
+    @Test
+    void specificationBasic() {
+        // Given
+        Team teamA = new Team("teamA");
+        em.persist(teamA);
+
+        Member m1 = new Member("m1", 0, teamA);
+        Member m2 = new Member("m2", 0, teamA);
+        em.persist(m1);
+        em.persist(m2);
+
+        em.flush();
+        em.clear();
+
+        // When
+        Specification<Member> spec = MemberSpecification.username("m1").and(MemberSpecification.teamName("teamA"));
+        List<Member> result = memberRepository.findAll(spec);
+
+        // Then
+        assertThat(result.size()).isEqualTo(1);
     }
 }
