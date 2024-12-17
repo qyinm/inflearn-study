@@ -1,9 +1,9 @@
 package com.hippoo.querydsl;
 
+import static com.hippoo.querydsl.entity.QMember.member;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.hippoo.querydsl.entity.Member;
-import com.hippoo.querydsl.entity.QMember;
 import com.hippoo.querydsl.entity.Team;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -20,8 +20,12 @@ public class QuerydslBasicTest {
     @Autowired
     EntityManager em;
 
+    JPAQueryFactory queryFactory;
+
     @BeforeEach
     void testEntity() {
+        queryFactory = new JPAQueryFactory(em);
+
         // Given
         Team teamA = new Team("teamA");
         Team teamB = new Team("teamB");
@@ -53,14 +57,11 @@ public class QuerydslBasicTest {
 
     @Test
     void startQuerydsl() {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-
-        QMember m = new QMember("m");
-
+        // 같은 테이블 조인할 때만 이름 넣자
         Member findMember = queryFactory
-                .select(m)
-                .from(m)
-                .where(m.username.eq("member1"))
+                .select(member)
+                .from(member)
+                .where(member.username.eq("member1"))
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
